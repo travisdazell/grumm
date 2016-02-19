@@ -15,14 +15,36 @@ varDecl
     :
     	ID ':' type ('=' expr)? ';'?
     ;
+
 type
 	:
+		primitiveType |
+		objectType
+	;
+	
+primitiveType
+	:
 		'float'	 |	// float
+		'double' |  // double
 		'int'    |	// int
 		'void'	 |	// void
-		'string' |  // string
-		('float' | 'int' | 'string') '[' INT ']'	|   // array
-		('float' | 'int' | 'string') '<' INT? '>'		// list
+		'char'	 |	// char
+		'byte'	 |  // byte
+		'short'  |  // short
+		'long'   |  // long
+	;
+
+objectType
+	:
+		object							  # ClassType
+		|	'Array' '<' type '>' '[' INT ']'  # ArrayType
+		|	'List' '<' type '>'				  # ListType
+		|	'Map' '<' type ',' type '>'		  # MapType
+	;
+
+object
+	:
+		ID	('.' ID)*
 	;
 
 functionDecl
@@ -46,24 +68,8 @@ stat:   block
     |   expr ';'?          	// func call
     ;
 
-/* expr below becomes the following non-left recursive rule:
-expr[int _p]
-    :   ( '-' expr[6]
-        | '!' expr[5]
-        | ID
-        | INT
-        | '(' expr ')'
-        )
-        ( {8 >= $_p}? '*' expr[9]
-        | {7 >= $_p}? ('+'|'-') expr[8]
-        | {4 >= $_p}? '==' expr[5]
-        | {10 >= $_p}? '[' expr ']'
-        | {9 >= $_p}? '(' exprList? ')'
-        )*
-    ;
-*/
-
-expr:   ID '(' exprList? ')'    # Call
+expr:	ID '.' ID '(' exprList? ')' # CallOnObject
+	|	ID '(' exprList? ')'    # Call
     |   expr '[' expr ']'       # Index
     |   '-' expr                # Negate
     |   '!' expr                # Not
@@ -82,7 +88,6 @@ exprList : expr (',' expr)* ;   // arg list
 K_FLOAT : 'float';
 K_INT   : 'int';
 K_VOID  : 'void';
-K_STRING	: 'string';
 ID  :   (LETTER | '_') (LETTER | '_' | [0-9])* ;
 
 fragment
