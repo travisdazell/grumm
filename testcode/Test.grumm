@@ -1,0 +1,26 @@
+// Cymbol test
+
+class Test {
+	g : int = 9         // a global variable
+	h : float = 10.57	// another global variable
+	myArray : int[3] 	// array of 3 integers
+	myList	: float<> 	// list of floats of unknown length
+
+	/**
+		A function that returns the factorial of a given integer value
+	*/
+	fact(x : int) : int {
+	    if x==0 return 1;
+	    return x * fact(x-1);
+	}
+	
+	substring(s : string) : string {
+		if (g == 0) return "0"
+		else if (g == 1) return "1"
+		else return "hello world"
+	}
+	
+	main(args: string<>) {
+		substring("test1", "test2");
+	}
+}
